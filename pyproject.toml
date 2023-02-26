@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "concrete_reports"
+authors = [{name = "Connor Ferster", email = "connor@structuralpython.com"}]
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: Apache Software License"]
+dynamic = ["version", "description"]
+
+dependencies = [
+    "tabula-py",
+    "pandas",
+    "plotly",
+    "ipywidgets",
+    "rich",
+    "streamlit",
+]
+
+[project.urls]
+Home = "https://github.com/connorferster/concrete_test_reports"
