@@ -1,0 +1,6 @@
+tabula-py
+pandas
+plotly
+ipywidgets
+rich
+streamlit
