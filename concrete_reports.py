@@ -14,29 +14,26 @@ from rich.progress import track
 import plotly.graph_objects as go
 
 
-def load_template_areas(filename: list[str | pathlib.Path]) -> list[list[float]]:
-    """
-    Reads the area extents in each of the template files in filenames.
-    """
-    areas = []
-    with open(filename, 'r') as file:
-        template_data = json.load(file)
+# def load_template_areas(filename: list[str | pathlib.Path]) -> list[list[float]]:
+#     """
+#     Reads the area extents in each of the template files in filenames.
+#     """
+#     areas = []
+#     with open(filename, 'r') as file:
+#         template_data = json.load(file)
         
-    for template in template_data: 
-        areas.append([template['y1'], template['x1'], template['y2'], template['x2']])
-    return areas
+#     for template in template_data: 
+#         areas.append([template['y1'], template['x1'], template['y2'], template['x2']])
+#     return areas
         
 def read_pdf_data(filename: str | pathlib.Path, template_file: str | pathlib.Path) -> list[pd.DataFrame]:
     """
     Returns multiple dataframes representing multiple area regions of table data
     extracted from the concrete test report in 'filename'.
     """
-    extraction_areas = load_template_areas(template_file)
-    df_list = tabula.read_pdf(
+    df_list = tabula.read_pdf_with_template(
         input_path = filename,
-        pages=1,
-        multiple_tables=True,
-        area=extraction_areas,
+        template_path = template_file,
         pandas_options = {"header": None},
     )
     return df_list
@@ -76,32 +73,24 @@ def plot(concrete_df: pd.DataFrame, plot_name: str = "") -> None:
     Plots the DataFrame, 'concrete_df' as a bar chart with dates on the 
     x-axis and strength on the y-axis as a stacked chart.
     """
-    # bar_width = 0.3
-    # print(concrete_df.index)
-    # print(list(concrete_df['Expected (MPa)']))
     expected = go.Bar(name="Expected (MPa)", 
            x=concrete_df.index,
            y=concrete_df["Expected (MPa)"],
-        #    width = bar_width,
            marker_color = 'rgba(255,0,0,1)',
            hovertext = concrete_df["Expected (MPa)"].map(str) + "<br>" + concrete_df["Location"],
-        #    hoverinfo = "text"
           )
     
     sample_a = go.Bar(name="Sample A", 
            x=concrete_df.index, 
            y=concrete_df["Sample A (MPa)"],
-        #    width = bar_width,
            marker_color = 'rgba(0,0,0, 0.3)',
            hovertext = concrete_df["Sample A (MPa)"].map(str) + " @ " + concrete_df["Sample A (Age)"].map(str) + " days",
            hoverinfo = "text"
-           #width = 1
           )
     
     sample_b = go.Bar(name="Sample B", 
            x=concrete_df.index,
            y=concrete_df["Sample B (MPa)"], 
-        #    width = bar_width,
            marker_color = 'rgba(0,0,0, 0.35)',
            hovertext = concrete_df["Sample B (MPa)"].map(str) + " @ " + concrete_df["Sample B (Age)"].map(str)+ " days",
            hoverinfo = "text"
@@ -110,7 +99,6 @@ def plot(concrete_df: pd.DataFrame, plot_name: str = "") -> None:
     sample_c = go.Bar(name="Sample C", 
            x=concrete_df.index,
            y=concrete_df["Sample C (MPa)"], 
-        #    width = bar_width,
            marker_color = 'rgba(0, 0, 0, 0.40)',
            hovertext = concrete_df["Sample C (MPa)"].map(str) + " @ " + concrete_df["Sample C (Age)"].map(str)+ " days",
            hoverinfo = "text"
@@ -119,7 +107,6 @@ def plot(concrete_df: pd.DataFrame, plot_name: str = "") -> None:
     sample_d = go.Bar(name="Sample D", 
            x=concrete_df.index,
            y=concrete_df["Sample D (MPa)"], 
-        #    width = bar_width,
            marker_color = 'rgba(0,0,0, 0.45)',
            hovertext = concrete_df["Sample D (MPa)"].map(str) + " @ " + concrete_df["Sample D (Age)"].map(str)+ " days",
            hoverinfo = "text"
