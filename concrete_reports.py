@@ -146,39 +146,27 @@ def abc_reports(
     samples_df, spec_strength_df, supplier_df, cast_info_df = read_pdf_data(
         report, templates_dir /  "ABC_Company.json"
     )
-    # Clean sample data
+    # Clean and extract the sample data
     header_first_row = any(samples_df.iloc[0].str.contains("SAMPLE").fillna(False))
     header_second_row = any(samples_df.iloc[1].str.contains("SAMPLE").fillna(False))
     header_third_row = any(samples_df.iloc[2].str.contains("SAMPLE").fillna(False))
     if header_first_row == True: 
         header_row_idx = 0
-        header_row = pd.Index(samples_df.iloc[header_row_idx])
-        sample_col_idx = header_row.get_loc("SAMPLE")
-        try:
-            age_col_idx = header_row.get_loc("AGE(DAYS)")
-        except KeyError:
-            age_col_idx = header_row.get_loc("AGE (DAYS)")
-        strength_col_idx = header_row.get_loc("COMPRESSIVE STRENGTH (MPa)")
     elif header_second_row == True:
         header_row_idx = 1
-        header_row = pd.Index(samples_df.iloc[header_row_idx])
-        sample_col_idx = header_row.get_loc("SAMPLE")
-        try:
-            age_col_idx = header_row.get_loc("AGE(DAYS)")
-        except KeyError:
-            age_col_idx = header_row.get_loc("AGE (DAYS)")
-        strength_col_idx = header_row.get_loc("COMPRESSIVE STRENGTH (MPa)")
     elif header_third_row == True:
         header_row_idx = 3
-        header_row = pd.Index(samples_df.iloc[header_row_idx])
-        sample_col_idx = header_row.get_loc("SAMPLE")
-        try:
-            age_col_idx = header_row.get_loc("AGE(DAYS)")
-        except KeyError:
-            age_col_idx = header_row.get_loc("AGE (DAYS)")
-        strength_col_idx = header_row.get_loc("COMPRESSIVE STRENGTH (MPa)")
 
-    clean_samples = samples_df.loc[header_row_idx + 1:, [sample_col_idx, age_col_idx, strength_col_idx]].reset_index(drop=True)
+    header_row = pd.Index(samples_df.iloc[header_row_idx])
+    sample_col_idx = header_row.get_loc("SAMPLE")
+    try:
+        age_col_idx = header_row.get_loc("AGE(DAYS)")
+    except KeyError:
+        age_col_idx = header_row.get_loc("AGE (DAYS)")
+    strength_col_idx = header_row.get_loc("COMPRESSIVE STRENGTH (MPa)")
+    clean_samples = samples_df.loc[
+        header_row_idx + 1:, [sample_col_idx, age_col_idx, strength_col_idx]
+    ].reset_index(drop=True)
     clean_samples.columns = ["Sample", "Age", "Strength"]
 
     # Extract spec_strength

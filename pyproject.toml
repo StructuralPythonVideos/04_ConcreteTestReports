@@ -16,6 +16,7 @@ dependencies = [
     "ipywidgets",
     "rich",
     "streamlit",
+    "nbformat>=4.2.0"
 ]
 
 [project.urls]
